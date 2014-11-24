@@ -1,6 +1,7 @@
 from . import errors
-from .api import set_apikey
-from .request import get, post, put, delete
+from . import api
+from .list import MailingList
+from .member import Member
 
 
-__all__ = ['get', 'post', 'put', 'delete', 'set_apikey', 'errors']
+__all__ = ['api', 'errors', 'MailingList', 'Member']

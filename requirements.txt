@@ -1,0 +1,3 @@
+hashlib==20081119
+hmac==20101005
+requests==2.4.3
