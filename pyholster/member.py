@@ -20,11 +20,11 @@ class Member(object):
 
     def __init__(self, **kwargs):
 
-        object.__setattribute__(self, 'address', kwargs.get('address'))
-        object.__setattribute__(self, 'name', kwargs.get('name', None))
-        object.__setattribute__(self, 'vars', kwargs.get('vars', '{}'))
-        object.__setattribute__(self, 'subscribed', kwargs.get('subscribed', True))
-        object.__setattribute__(self, 'mailing_list', kwargs.get('mailing_list'))
+        object.__setattr__(self, 'address', kwargs.get('address'))
+        object.__setattr__(self, 'name', kwargs.get('name', None))
+        object.__setattr__(self, 'vars', kwargs.get('vars', '{}'))
+        object.__setattr__(self, 'subscribed', kwargs.get('subscribed', True))
+        object.__setattr__(self, 'mailing_list', kwargs.get('mailing_list'))
 
     def __setattribute__(self, *args, **kwargs):
         """Prevent direct setting of attributes."""
@@ -70,15 +70,15 @@ class Member(object):
         update_data = {}
 
         for key in set(kwargs.keys()) & set(['name', 'description', 'access_level']):
-            object.__setattribute__(self, key, kwargs.get(key))
+            object.__setattr__(self, key, kwargs.get(key))
             update_data[key] = kwargs.get(key)
 
         if 'address' in kwargs:
-            object.__setattribute__(self, 'new_address', kwargs.get('address'))
+            object.__setattr__(self, 'new_address', kwargs.get('address'))
             update_data['address'] = kwargs.get('address')
 
         if 'vars' in kwargs:
-            object.__setattribute__(self, 'vars', kwargs.get('vars'))
+            object.__setattr__(self, 'vars', kwargs.get('vars'))
             update_data['vars'] = json.dumps(kwargs.get('vars'))
 
         try:
@@ -88,7 +88,7 @@ class Member(object):
             raise
         else:
             if hasattr(self, 'new_address'):
-                object.__setattribute__(self, 'address', self.new_address)
+                object.__setattr__(self, 'address', self.new_address)
                 delattr(self, 'new_address')
             return True
 

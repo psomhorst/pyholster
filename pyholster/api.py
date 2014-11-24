@@ -5,7 +5,7 @@ import hmac
 from . import errors
 
 
-baseurl = 'https://api.mailgun.net/v2/'
+baseurl = 'https://api.mailgun.net/v2'
 apikey = None
 
 
@@ -58,6 +58,8 @@ def delete(url):
 def handle_response(r, *args, **kwargs):
     message = "[{request[method]}] {request[url]} :: {reason}".format(
         request=r.request.__dict__, reason=r.reason)
+
+    print r
 
     if 'token' in r.json():
         if not verify(r.json()):
