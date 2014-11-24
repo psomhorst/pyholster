@@ -1,3 +1,8 @@
 hashlib==20081119
 hmac==20101005
 requests==2.4.3
+responses==0.3.0
+pytest==2.6.4
+mock==1.0.1
+py==1.4.26
+pytest==2.6.4
