@@ -42,7 +42,7 @@ class MailingList(object):
     def load(cls, address):
         try:
             response = api.get('/lists/{}'.format(address))
-        except errors.MailgunRequestException:
+        except errors.MailgunException:
             raise LookupError('Could not load MailingList from Mailgun.')
         else:
             data = response['list']
@@ -197,8 +197,8 @@ class MailingList(object):
         Mailgun."""
 
         try:
-            self.__class__.load(self.address)
-        except errors.MailgunRequestException:
+            print self.__class__.load(self.address).__dict__
+        except LookupError:
             return False
         else:
             return True

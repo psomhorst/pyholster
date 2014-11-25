@@ -18,10 +18,9 @@ def get(url, params=None):
     if not params:
         params = {}
     url = baseurl + url
-    return requests.get(url,
-                        auth=('api', apikey),
-                        params=params,
-                        hooks=hooks).json()
+    return handle_response(requests.get(url,
+                                        auth=('api', apikey),
+                                        params=params)).json()
 
 
 def post(url, data):
@@ -31,10 +30,9 @@ def post(url, data):
           .format(url=url,
                   data=','.join('{}={}'.format(k, str(v)) for k, v in data.iteritems())))
 
-    return requests.post(url,
-                         auth=('api', apikey),
-                         data=data,
-                         hooks=hooks).json()
+    return handle_response(requests.post(url,
+                                         auth=('api', apikey),
+                                         data=data)).json()
 
 
 def put(url, data):
@@ -43,16 +41,15 @@ def put(url, data):
           .format(url=url,
                   data=','.join('{}={}'.format(k, str(v)) for k, v in data.iteritems())))
 
-    return requests.put(url,
-                        auth=('api', apikey),
-                        data=data,
-                        hooks=hooks).json()
+    return handle_response(requests.put(url,
+                                        auth=('api', apikey),
+                                        data=data)).json()
 
 
 def delete(url):
     url = baseurl + url
     print("[DEL] {url}".format(url=url))
-    return requests.delete(url, auth=('api', apikey), hooks=hooks).json()
+    return handle_response(requests.delete(url, auth=('api', apikey))).json()
 
 
 def handle_response(r, *args, **kwargs):
@@ -65,29 +62,16 @@ def handle_response(r, *args, **kwargs):
         if not verify(r.json()):
             raise errors.MailgunVerifyFailed()
 
-    if r.status_code == 400:
-        raise errors.MailgunBadRequest(message)
-
-    elif r.status_code == 401:
-        raise errors.MailgunUnauthorized(message)
-
-    elif r.status_code == 402:
-        raise errors.MailgunFailed(message)
-
-    elif r.status_code == 404:
-        raise errors.MailgunNotFound(message)
-
-    elif r.status_code == 406:
-        raise errors.MailgunNotAcceptable(message)
-
-    elif r.status_code in (500, 502, 503, 504):
-        raise errors.MailgunServerError(message)
+    if r.status_code in errors.html_status_codes:
+        raise errors.html_status_codes[r.status_code](message)
 
     elif r.status_code != 200:
         raise errors.MailgunUnknown(
             "[{request[method]}] {request[url]} :: {code} :: {codetype} :: {reason}"
             .format(code=r.status_code, codetype=str(type(r.status_code)),
                     request=r.request.__dict__, reason=r.reason))
+
+    return r
 
 
 def verify(params):
@@ -97,3 +81,8 @@ def verify(params):
         digestmod=hashlib.sha256).hexdigest()
 
 hooks = dict(response=handle_response)
+
+GET = get
+PUT = put
+POST = post
+DELETE = delete
