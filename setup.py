@@ -10,5 +10,5 @@ setup(name='pyholster',
       description='Mailgun class for interaction with Mailgun API',
       author='Peter Somhorst',
       author_email='peter.somhorst@gmail.com',
-      url='https://github.com/psomhorst/',
+      url='https://github.com/psomhorst/pyholster',
       install_requires=required)
