@@ -1,24 +1,18 @@
 import responses
 import json
-import yaml
-import os
 import types
-
+import pytest
 
 import pyholster
 
 
-def load_fixture(filename):
-    path = os.path.join(os.path.dirname(__file__), 'fixtures/', filename)
-    with open(path, 'r') as stream:
-        if filename.endswith('yml'):
-            return yaml.load(stream)
-        elif filename.endswith('json'):
-            return json.load(stream)
-        raise ValueError("Filename should end with '.yml' or '.json'.")
+from utils import load_fixture
 
 
 class TestMailingList:
+
+    def test_init(self):
+        pytest.fail()
 
     @responses.activate
     def test_load_all(self):
@@ -162,14 +156,14 @@ class TestMailingList:
 
     @responses.activate
     def test_get_members_by_vars(self):
+
         fixt = load_fixture('lists.yml')['items'][0]
+        fixt_messages = load_fixture('members.yml')
 
         responses.add(responses.GET,
                       pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
-
-        fixt_messages = load_fixture('members.yml')
 
         responses.add(responses.GET,
                       pyholster.api.baseurl + '/lists/{}/members'.format(fixt['address']),
@@ -206,6 +200,9 @@ class TestMailingList:
         lst = pyholster.MailingList(**fixt)
 
         assert not lst.is_implemented()
+        assert len(responses.calls) is 1
+
+        responses.reset()
 
         responses.add(responses.GET,
                       pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
