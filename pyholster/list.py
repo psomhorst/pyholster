@@ -197,7 +197,7 @@ class MailingList(object):
         Mailgun."""
 
         try:
-            print self.__class__.load(self.address).__dict__
+            print self.__class__.load(self.address)
         except LookupError:
             return False
         else:

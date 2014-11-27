@@ -1,6 +1,7 @@
 import requests
 import hashlib
 import hmac
+import json
 
 from . import errors
 
@@ -18,9 +19,12 @@ def get(url, params=None):
     if not params:
         params = {}
     url = baseurl + url
-    return handle_response(requests.get(url,
-                                        auth=('api', apikey),
-                                        params=params)).json()
+    try:
+        return handle_response(requests.get(url,
+                                            auth=('api', apikey),
+                                            params=params)).json()
+    except requests.exceptions.ConnectionError:
+        raise errors.MailgunRequestException
 
 
 def post(url, data):
@@ -29,10 +33,13 @@ def post(url, data):
     print("[POST] {url} :: {data}"
           .format(url=url,
                   data=','.join('{}={}'.format(k, str(v)) for k, v in data.iteritems())))
+    try:
 
-    return handle_response(requests.post(url,
-                                         auth=('api', apikey),
-                                         data=data)).json()
+        return handle_response(requests.post(url,
+                                             auth=('api', apikey),
+                                             data=json.dumps(data))).json()
+    except requests.exceptions.ConnectionError:
+        raise errors.MailgunRequestException
 
 
 def put(url, data):
@@ -40,16 +47,22 @@ def put(url, data):
     print("[PUT] {url} :: {data}"
           .format(url=url,
                   data=','.join('{}={}'.format(k, str(v)) for k, v in data.iteritems())))
-
-    return handle_response(requests.put(url,
-                                        auth=('api', apikey),
-                                        data=data)).json()
+    try:
+        return handle_response(requests.put(url,
+                                            auth=('api', apikey),
+                                            data=json.dumps(data))).json()
+    except requests.exceptions.ConnectionError:
+        raise errors.MailgunRequestException
 
 
 def delete(url):
     url = baseurl + url
     print("[DEL] {url}".format(url=url))
-    return handle_response(requests.delete(url, auth=('api', apikey))).json()
+    try:
+        return handle_response(requests.delete(url, auth=('api', apikey))).json()
+
+    except requests.exceptions.ConnectionError:
+        raise errors.MailgunRequestException
 
 
 def handle_response(r, *args, **kwargs):

@@ -1,6 +1,6 @@
 import json
 
-from . import request
+from . import api
 from . import errors
 
 
@@ -20,11 +20,11 @@ class Member(object):
 
     def __init__(self, **kwargs):
 
-        object.__setattr__(self, 'address', kwargs.get('address'))
-        object.__setattr__(self, 'name', kwargs.get('name', None))
-        object.__setattr__(self, 'vars', kwargs.get('vars', '{}'))
+        object.__setattr__(self, 'address', kwargs['address'])
+        object.__setattr__(self, 'name', kwargs.get('name'))
+        object.__setattr__(self, 'vars', kwargs.get('vars', {}))
         object.__setattr__(self, 'subscribed', kwargs.get('subscribed', True))
-        object.__setattr__(self, 'mailing_list', kwargs.get('mailing_list'))
+        object.__setattr__(self, 'mailing_list', kwargs['mailing_list'])
 
     def __setattribute__(self, *args, **kwargs):
         """Prevent direct setting of attributes."""
@@ -37,19 +37,19 @@ class Member(object):
     ##
 
     @classmethod
-    def load(cls, list, address):
+    def load(cls, lst, address):
         try:
-            response = request.get('/lists/{}/members/{}'.format(list.address, address))
+            response = api.get('/lists/{}/members/{}'.format(lst.address, address))
         except errors.MailgunRequestException:
             raise LookupError(
-                'Could not load Members for MailingList {} from Mailgun.'.format(list.address))
+                'Could not load Members for MailingList {} from Mailgun.'.format(lst.address))
         else:
-            data = response.json()
-
-            return cls(address=address,
-                       name=data.get('name', None),
-                       vars=data.get('vars', '{}'),
-                       subscribed=data.get('subscribed'))
+            data = response['member']
+            return cls(mailing_list=lst,
+                       address=data['address'],
+                       name=data.get('name'),
+                       vars=data.get('vars', {}),
+                       subscribed=data['subscribed'])
 
     ##
     # Getters and setters
@@ -63,27 +63,27 @@ class Member(object):
                 'Can not update non-implemented Member. Insert first.')
 
         if 'mailing_list' in kwargs:
-            raise errors.MailgunNotSettableError(
+            raise AttributeError(
                 "The MailingList can not be changed. "
                 "Create a new Member instance for another MailingList.")
 
         update_data = {}
 
-        for key in set(kwargs.keys()) & set(['name', 'description', 'access_level']):
-            object.__setattr__(self, key, kwargs.get(key))
-            update_data[key] = kwargs.get(key)
+        for key in set(kwargs.keys()) & set(['name', 'vars', 'subscribed']):
+            object.__setattr__(self, key, kwargs[key])
+            update_data[key] = kwargs[key]
 
         if 'address' in kwargs:
-            object.__setattr__(self, 'new_address', kwargs.get('address'))
-            update_data['address'] = kwargs.get('address')
+            object.__setattr__(self, 'new_address', kwargs['address'])
+            update_data['address'] = kwargs['address']
 
         if 'vars' in kwargs:
-            object.__setattr__(self, 'vars', kwargs.get('vars'))
-            update_data['vars'] = json.dumps(kwargs.get('vars'))
+            object.__setattr__(self, 'vars', kwargs['vars'])
+            update_data['vars'] = json.dumps(kwargs['vars'])
 
         try:
-            request.put('/lists/{}/members/{}'.format(self.mailing_list.address, self.address),
-                        update_data)
+            api.put('/lists/{}/members/{}'.format(self.mailing_list.address, self.address),
+                    update_data)
         except errors.MailgunRequestException:
             raise
         else:
@@ -94,7 +94,7 @@ class Member(object):
 
     def delete(self):
         try:
-            request.delete('/lists/{}/members/{}'.format(self.mailing_list.address, self.address))
+            api.delete('/lists/{}/members/{}'.format(self.mailing_list.address, self.address))
         except errors.MailgunRequestException:
             raise
         else:
@@ -117,7 +117,7 @@ class Member(object):
                 'upsert': False}
 
         try:
-            request.post('/lists/{}/members'.format(self.mailing_list.address), data)
+            api.post('/lists/{}/members'.format(self.mailing_list.address), data)
         except errors.MailgunRequestException:
             raise
         else:
