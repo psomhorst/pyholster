@@ -20,14 +20,75 @@ def load_fixture(filename):
 class TestMember:
 
     def test_init(self):
-        pytest.fail()
+        member = ph.Member(address='test@testing.test',
+                           vars={'age': 100},
+                           mailing_list=True)
+        assert member.vars['age'] == 100
+        assert member.address == 'test@testing.test'
+
+        with pytest.raises(KeyError):
+            ph.Member()
+        with pytest.raises(KeyError):
+            ph.Member(address='test')
 
     @responses.activate
     def test_load(self):
-        pass
+        fixt_member = load_fixture('members.yml')['items'][0]
+        fixt_lst = load_fixture('lists.yml')['items'][0]
 
+        responses.add(responses.GET,
+                      ph.api.baseurl + '/lists/{}'.format(fixt_lst['address']),
+                      body=json.dumps(dict(list=fixt_lst)),
+                      status=200)
+
+        mailing_list = ph.MailingList.load(fixt_lst['address'])
+
+        responses.add(responses.GET,
+                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
+                                                                     fixt_member['address']),
+                      body=json.dumps(dict(member=fixt_member)),
+                      status=200)
+
+        member = ph.Member.load(mailing_list, fixt_member['address'])
+
+        for attr in ('name', 'address', 'vars', 'subscribed'):
+            assert getattr(member, attr) == fixt_member.get(attr)
+
+    @responses.activate
     def test_update(self):
-        pass
+        member = load_fixture('members.yml')['items'][0]
+        fixt_lst = load_fixture('lists.yml')['items'][0]
+
+        responses.add(responses.GET,
+                      ph.api.baseurl + '/lists/{}'.format(fixt_lst['address']),
+                      body=json.dumps(dict(list=fixt_lst)),
+                      status=200)
+
+        mailing_list = ph.MailingList.load(fixt_lst['address'])
+
+        responses.add(responses.GET,
+                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
+                                                                     member['address']),
+                      body=json.dumps(dict(member=member)),
+                      status=200)
+
+        def put_callback(request):
+            print request.body
+            body = json.loads(request.body)
+            assert body['address'] == 'newaddress@tests.eu'
+            return (200, {}, "{}")
+
+        responses.add_callback(responses.PUT,
+                               ph.api.baseurl + '/lists/{}/members/{}'.format(
+                                   mailing_list.address, member['address']),
+                               callback=put_callback,
+                               content_type='application/json')
+
+        member = ph.Member.load(mailing_list, member['address'])
+        member.update(address='newaddress@tests.eu', subscribed=False)
+
+        assert member.address == 'newaddress@tests.eu'
+        assert not member.subscribed
 
     def test_delete(self):
         pass
