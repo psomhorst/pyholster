@@ -2,10 +2,13 @@
 
 from distutils.core import setup
 
-setup(name='Mailgun',
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
+setup(name='pyholster',
       version='0.0.1',
       description='Mailgun class for interaction with Mailgun API',
       author='Peter Somhorst',
       author_email='peter.somhorst@gmail.com',
-      url='http://www.csvalpha.nl/',
-      packages=['mailgun'])
+      url='https://github.com/psomhorst/pyholster',
+      install_requires=required)

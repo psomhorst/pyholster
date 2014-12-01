@@ -1,0 +1,9 @@
+items:
+    - address: test@token.eu
+      name: Token Test
+      description: Tests for tokens
+      access_level: members
+    - address: tweak@token.eu
+      name: Token Tweak
+      description: Tweaks for tokens
+      access_level: everyone

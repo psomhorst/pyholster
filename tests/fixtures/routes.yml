@@ -1,0 +1,30 @@
+items:
+  - id: f34d7138-003f-432c-9cc6-07507058a480
+    priority: 0
+    description: Aut ut odio unde porro in.
+    expression: match_recipient("alias1@lists.eu")
+    actions:
+      - forward("listsss@listlsitast.eu")
+      - forward("listsas@ast.eu")
+    created_at: "1987-04-12 08:00:24"
+  - id: cd38337b-41dd-43cd-a824-c7b6faaa8fc7
+    priority: 1
+    description: Aut ut odio unde porro in.
+    expression: match_recipient("alias3@lists.eu")
+    actions:
+      - forward("list@lists.eu")
+    created_at: "1987-04-12 08:00:24"
+  - id: 769bcabc-c146-4071-be14-7e8bfec1dcfd
+    priority: 2
+    description: Aut ut odio unde porro in.
+    expression: match_recipient("alias2@lists.eu")
+    actions:
+      - forward("list2@lists.eu")
+    created_at: "1985-09-12 12:54:32"
+  - id: 7b8b65d7-0b3d-483a-98ea-1c79236c91e0
+    priority: 0
+    description: Aut fuga magni adipisci.
+    expression: match_recipient("alias1@lists.eu")
+    actions:
+      - stop()
+    created_at: "1977-05-25 19:37:41"

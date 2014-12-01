@@ -1,0 +1,14 @@
+items:
+  - name: Foo Bar
+    subscribed: True
+    vars:
+        id: 200
+        age: 21
+    address: foobar@tokens.eu
+  - name: Bar Foo
+    subscribed: True
+    vars:
+        id: 218
+        age: 21
+        sex: male
+    address: barfoo@tokens.eu

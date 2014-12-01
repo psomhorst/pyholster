@@ -33,8 +33,10 @@ class MailgunUnknown(MailgunRequestException):
 class MailgunNotAcceptable(MailgunRequestException):
     pass
 
+
 class MailgunNotSettableError(MailgunException):
     pass
+
 
 class MailgunVerifyFailed(MailgunException):
     pass
@@ -42,3 +44,15 @@ class MailgunVerifyFailed(MailgunException):
 
 class MailgunDuplicateAddress(MailgunException):
     pass
+
+html_status_codes = {
+    400: MailgunBadRequest,
+    401: MailgunUnauthorized,
+    402: MailgunFailed,
+    404: MailgunNotFound,
+    406: MailgunNotAcceptable,
+    500: MailgunServerError,
+    502: MailgunServerError,
+    503: MailgunServerError,
+    504: MailgunServerError
+}
