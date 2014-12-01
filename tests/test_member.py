@@ -90,9 +90,44 @@ class TestMember:
         assert member.address == 'newaddress@tests.eu'
         assert not member.subscribed
 
+    @responses.activate
     def test_delete(self):
-        pass
+        fixt_member = load_fixture('members.yml')['items'][0]
+        fixt_lst = load_fixture('lists.yml')['items'][0]
 
+        responses.add(responses.GET,
+                      ph.api.baseurl + '/lists/{}'.format(fixt_lst['address']),
+                      body=json.dumps(dict(list=fixt_lst)),
+                      status=200)
+
+        mailing_list = ph.MailingList.load(fixt_lst['address'])
+
+        responses.add(responses.GET,
+                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
+                                                                     fixt_member['address']),
+                      body=json.dumps(dict(member=fixt_member)),
+                      status=200)
+
+        responses.add(responses.DELETE,
+                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
+                                                                     fixt_member['address']),
+                      body="{}",
+                      status=200)
+
+        member = ph.Member.load(mailing_list, fixt_member['address'])
+        member.delete()
+
+        responses.reset()
+
+        responses.add(responses.DELETE,
+                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
+                                                                     fixt_member['address']),
+                      body="{}",
+                      status=404)
+
+        with pytest.raises(ph.errors.MailgunRequestException):
+            member.delete()
+n
     def test_implement(self):
         pass
 

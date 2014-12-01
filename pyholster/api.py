@@ -27,17 +27,19 @@ def get(url, params=None):
         raise errors.MailgunRequestException
 
 
-def post(url, data):
+def post(url, data, files=None):
 
     url = (baseurl + url).format(**globals())
     print("[POST] {url} :: {data}"
           .format(url=url,
                   data=','.join('{}={}'.format(k, str(v)) for k, v in data.iteritems())))
     try:
-
+        attributes = {'api': apikey,
+                      'data': json.dumps(data)}
+        if files:
+            attributes['files'] = files
         return handle_response(requests.post(url,
-                                             auth=('api', apikey),
-                                             data=json.dumps(data))).json()
+                                             **attributes)).json()
     except requests.exceptions.ConnectionError:
         raise errors.MailgunRequestException
 
