@@ -54,7 +54,6 @@ class Route(object):
 
     def update(self, **kwargs):
 
-
         if not self.is_implemented():
             raise errors.MailgunException(
                 'Cannot update non-implemented Route. Implement first.')

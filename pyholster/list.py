@@ -1,3 +1,5 @@
+import json
+
 from . import errors
 from . import api
 from .member import Member
@@ -22,7 +24,7 @@ class MailingList(object):
         object.__setattr__(self, 'description', kwargs.get('description', None))
         object.__setattr__(self, 'access_level', kwargs.get('access_level'))
 
-    def __setattribute__(self, *args, **kwargs):
+    def __setattr__(self, *args, **kwargs):
         """Prevent direct setting of attributes."""
 
         raise errors.MailgunNotSettableError(
@@ -132,11 +134,10 @@ class MailingList(object):
                            [Member(mailing_list=self, **member) for member in response['items']])
         return self.members
 
-    def add_member(self, member):
-        self.members.append(member)
-
-    def add_members(self, members):
-        self.members.extend(members)
+    def add_members_dictlist(self, members):
+        object.__setattr__(self, 'members', None)
+        api.post('/lists/{}/members.json'.format(self.address),
+                 dict(upsert=True, members=json.dumps(members)))
 
     def get_members_by_vars(self, **vars_):
         """Returns a generator generating a filtered list of members based on the passed variables

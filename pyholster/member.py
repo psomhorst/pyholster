@@ -98,6 +98,10 @@ class Member(object):
         except errors.MailgunRequestException:
             raise
         else:
+            try:
+                self.mailing_list.members.remove(self)
+            except ValueError:
+                pass
             return True
 
     def implement(self):
