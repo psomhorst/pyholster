@@ -20,6 +20,7 @@ def get(url, params=None):
         params = {}
     url = baseurl + url
     try:
+        print "PyHolster # GET # ", url, params
         return handle_response(requests.get(url,
                                             auth=('api', apikey),
                                             params=params)).json()
@@ -32,14 +33,18 @@ def post(url, data, files=None):
     url = (baseurl + url).format(**globals())
     print("[POST] {url} :: {data}"
           .format(url=url,
-                  data=','.join('{}={}'.format(k, str(v)) for k, v in data.iteritems())))
+                  data=','.join('{}={}'.format(k, str(v))
+                                for k, v in data.iteritems())))
     try:
-        attributes = {'api': apikey,
-                      'data': json.dumps(data)}
+        attributes = {'auth': ('api', apikey),
+                      'data': (data)}
         if files:
             attributes['files'] = files
-        return handle_response(requests.post(url,
-                                             **attributes)).json()
+        # print url, attributes
+        print "PyHolster # POST # ", url, data, files
+        #
+        return handle_response(requests.post(
+            url, **attributes), (url, attributes)).json()
     except requests.exceptions.ConnectionError:
         raise errors.MailgunRequestException
 
@@ -48,11 +53,13 @@ def put(url, data):
     url = baseurl + url
     print("[PUT] {url} :: {data}"
           .format(url=url,
-                  data=','.join('{}={}'.format(k, str(v)) for k, v in data.iteritems())))
+                  data=','.join('{}={}'.format(k, str(v))
+                                for k, v in data.iteritems())))
     try:
+        print "PyHolster # PUT # ", url, data
         return handle_response(requests.put(url,
                                             auth=('api', apikey),
-                                            data=json.dumps(data))).json()
+                                            data=data)).json()
     except requests.exceptions.ConnectionError:
         raise errors.MailgunRequestException
 
@@ -70,8 +77,6 @@ def delete(url):
 def handle_response(r, *args, **kwargs):
     message = "[{request[method]}] {request[url]} :: {reason}".format(
         request=r.request.__dict__, reason=r.reason)
-
-    print r
 
     if 'token' in r.json():
         if not verify(r.json()):

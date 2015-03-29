@@ -103,14 +103,16 @@ class TestMember:
         mailing_list = ph.MailingList.load(fixt_lst['address'])
 
         responses.add(responses.GET,
-                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
-                                                                     fixt_member['address']),
+                      ph.api.baseurl + '/lists/{}/members/{}'
+                      .format(mailing_list.address,
+                              fixt_member['address']),
                       body=json.dumps(dict(member=fixt_member)),
                       status=200)
 
         responses.add(responses.DELETE,
-                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
-                                                                     fixt_member['address']),
+                      ph.api.baseurl + '/lists/{}/members/{}'
+                      .format(mailing_list.address,
+                              fixt_member['address']),
                       body="{}",
                       status=200)
 
@@ -120,14 +122,15 @@ class TestMember:
         responses.reset()
 
         responses.add(responses.DELETE,
-                      ph.api.baseurl + '/lists/{}/members/{}'.format(mailing_list.address,
-                                                                     fixt_member['address']),
+                      ph.api.baseurl + '/lists/{}/members/{}'
+                      .format(mailing_list.address,
+                              fixt_member['address']),
                       body="{}",
                       status=404)
 
         with pytest.raises(ph.errors.MailgunRequestException):
             member.delete()
-n
+
     def test_implement(self):
         pass
 

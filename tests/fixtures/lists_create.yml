@@ -1,0 +1,13 @@
+items:
+    - address: testing123@sandbox86621.mailgun.org
+      name: Token Test
+      description: Tests for tokens
+      access_level: members
+    - address: tweak@sandbox86621.mailgun.org
+      name: Token Tweak
+      description: Tweaks for tokens
+      access_level: everyone
+    - address: tankers@sandbox86621.mailgun.org
+      name: Tankers tanken tanks
+      description: With a tank-top-guy
+      access_level: readonly

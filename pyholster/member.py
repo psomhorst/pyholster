@@ -24,13 +24,14 @@ class Member(object):
         object.__setattr__(self, 'name', kwargs.get('name'))
         object.__setattr__(self, 'vars', kwargs.get('vars', {}))
         object.__setattr__(self, 'subscribed', kwargs.get('subscribed', True))
-        object.__setattr__(self, 'mailing_list', kwargs['mailing_list'])
+        object.__setattr__(self, 'mailing_list', kwargs.get('mailing_list'))
 
     def __setattribute__(self, *args, **kwargs):
         """Prevent direct setting of attributes."""
 
         raise errors.MailgunNotSettableError(
-            'Attributes of the Member cannot be set directly. Use the update() method.')
+            "Attributes of the Member cannot be set directly."
+            "Use the update() method.")
 
     ##
     # Class methods
@@ -39,10 +40,12 @@ class Member(object):
     @classmethod
     def load(cls, lst, address):
         try:
-            response = api.get('/lists/{}/members/{}'.format(lst.address, address))
+            response = api.get('/lists/{}/members/{}'
+                               .format(lst.address, address))
         except errors.MailgunRequestException:
             raise LookupError(
-                'Could not load Members for MailingList {} from Mailgun.'.format(lst.address))
+                "Could not load Members for MailingList {} from Mailgun."
+                .format(lst.address))
         else:
             data = response['member']
             return cls(mailing_list=lst,
@@ -60,7 +63,7 @@ class Member(object):
 
         if not self.is_implemented():
             raise errors.MailgunException(
-                'Can not update non-implemented Member. Insert first.')
+                "Can not update non-implemented Member. Insert first.")
 
         if 'mailing_list' in kwargs:
             raise AttributeError(
@@ -82,7 +85,8 @@ class Member(object):
             update_data['vars'] = json.dumps(kwargs['vars'])
 
         try:
-            api.put('/lists/{}/members/{}'.format(self.mailing_list.address, self.address),
+            api.put('/lists/{}/members/{}'.format(self.mailing_list.address,
+                                                  self.address),
                     update_data)
         except errors.MailgunRequestException:
             raise
@@ -94,17 +98,21 @@ class Member(object):
 
     def delete(self):
         try:
-            api.delete('/lists/{}/members/{}'.format(self.mailing_list.address, self.address))
+            api.delete(
+                '/lists/{}/members/{}'.format(self.mailing_list.address,
+                                              self.address))
         except errors.MailgunRequestException:
             raise
         else:
             return True
 
     def implement(self):
-        """Implements a member for the first time on Mailgun. Don't use for updates."""
+        """Implements a member for the first time on Mailgun. Don't use for
+        updates."""
 
         if self.is_implemented():
-            raise errors.MailgunException('This address is already in the MailingList on Mailgun.')
+            raise errors.MailgunException(
+                'This address is already in the MailingList on Mailgun.')
 
         if hasattr(self, 'new_address'):
             raise errors.MailgunException(
@@ -117,7 +125,8 @@ class Member(object):
                 'upsert': False}
 
         try:
-            api.post('/lists/{}/members'.format(self.mailing_list.address), data)
+            api.post(
+                '/lists/{}/members'.format(self.mailing_list.address), data)
         except errors.MailgunRequestException:
             raise
         else:
@@ -127,13 +136,19 @@ class Member(object):
     # Checkers
     ##
 
+    def upsert(self):
+        return self.update() if self.is_implemented() else self.implement()
+
     def is_implemented(self):
-        """Checks whether a Member with this address is implemented by trying to load it from
-        Mailgun."""
+        """Checks whether a Member with this address is implemented by trying
+        to load it from Mailgun."""
 
         try:
             self.__class__.load(self.mailing_list, self.address)
-        except errors.MailgunRequestException:
+        except errors.MailgunRequestException():
+            print self, 'Not implemented'
             return False
+        except Exception as e:
+            print e
         else:
             return True

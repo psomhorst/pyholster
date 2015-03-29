@@ -1,7 +1,9 @@
 import responses
 import json
 import types
-import pytest
+# import pytest
+import os
+import copy
 
 import pyholster
 
@@ -11,8 +13,52 @@ from utils import load_fixture
 
 class TestMailingList:
 
-    def test_init(self):
-        pytest.fail()
+    def set_apikey(self):
+        keypath = os.path.abspath(os.path.dirname(
+            os.path.realpath(__file__)) + '/../api.key')
+
+        with open(keypath, 'r') as keyfile:
+            pyholster.api.set_apikey(keyfile.read())
+
+    def test_implement_and_destroy(self):
+        self.set_apikey()
+
+        create_lists = load_fixture('lists_create.yml')
+
+        for clist in create_lists['items']:
+            try:
+                pyholster.MailingList.load(clist['address']).delete()
+            except LookupError:
+                pass
+            mlist = pyholster.MailingList(**clist)
+            mlist.implement()
+
+            pyholster.MailingList.load(clist['address'])
+
+            mlist.delete()
+
+    def test_member_management(self):
+        self.set_apikey()
+
+        create_lists = load_fixture('lists_create.yml')['items']
+        members = load_fixture('members.yml')['items']
+        clist = create_lists[0]
+        try:
+            pyholster.MailingList.load(clist['address']).delete()
+        except LookupError:
+            pass
+        mlist = pyholster.MailingList(**clist)
+        mlist.implement()
+
+        members_adding = copy.copy(members)
+        member = members_adding.pop(0)
+
+        mlist.add_member(pyholster.Member(**member))
+
+        mlist.add_members([pyholster.Member(**member)
+                           for member in members_adding])
+
+        mlist.update()
 
     @responses.activate
     def test_load_all(self):
@@ -30,7 +76,8 @@ class TestMailingList:
         lists = load_fixture('lists.yml')['items']
         fixt = lists[0]
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
@@ -46,12 +93,14 @@ class TestMailingList:
         fixt = load_fixture('lists.yml')['items'][0]
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
         responses.add(responses.DELETE,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps(dict(message='OK')))
 
@@ -64,12 +113,14 @@ class TestMailingList:
         fixt = load_fixture('lists.yml')['items'][0]
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
         responses.add(responses.PUT,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
@@ -87,12 +138,14 @@ class TestMailingList:
         fixt = load_fixture('lists.yml')['items'][0]
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
         responses.add(responses.PUT,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200, body="{}")
 
         lst = pyholster.MailingList.load(fixt['address'])
@@ -108,14 +161,16 @@ class TestMailingList:
         fixt = load_fixture('lists.yml')['items'][0]
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
         fixt_messages = load_fixture('members.yml')
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}/members'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}/members'.format(fixt['address']),
                       status=200,
                       body=json.dumps(fixt_messages))
 
@@ -133,14 +188,16 @@ class TestMailingList:
         fixt = load_fixture('lists.yml')['items'][0]
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
         fixt_messages = load_fixture('members.yml')
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}/members'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}/members'.format(fixt['address']),
                       status=200,
                       body=json.dumps(fixt_messages))
 
@@ -161,12 +218,14 @@ class TestMailingList:
         fixt_messages = load_fixture('members.yml')
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}/members'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}/members'.format(fixt['address']),
                       status=200,
                       body=json.dumps(fixt_messages))
 
@@ -193,7 +252,8 @@ class TestMailingList:
         fixt = lists[1]
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=400,
                       body=json.dumps({'list': fixt}))
 
@@ -205,7 +265,8 @@ class TestMailingList:
         responses.reset()
 
         responses.add(responses.GET,
-                      pyholster.api.baseurl + '/lists/{}'.format(fixt['address']),
+                      pyholster.api.baseurl +
+                      '/lists/{}'.format(fixt['address']),
                       status=200,
                       body=json.dumps({'list': fixt}))
 
