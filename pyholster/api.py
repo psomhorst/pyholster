@@ -6,7 +6,7 @@ import json
 from . import errors
 
 
-baseurl = 'https://api.mailgun.net/v2'
+baseurl = 'https://api.mailgun.net/v3'
 apikey = None
 
 
