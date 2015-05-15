@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Classes &mdash; pyholster 0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyholster 0.1 documentation" href="index.html"/>
+        <link rel="prev" title="Tutorial" href="tutorial.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="index.html" class="fa fa-home"> pyholster</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mailinglist">MailingList</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#member">Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#route">Route</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mail">Mail</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pyholster</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Classes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/classes.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="classes">
+<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mailinglist">
+<h2>MailingList<a class="headerlink" href="#mailinglist" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyholster.MailingList">
+<em class="property">class </em><code class="descclassname">pyholster.</code><code class="descname">MailingList</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent a MailingList in Mailgun. This class manages the alias
+(address), name, description and access level, as well as the members.</p>
+<dl class="method">
+<dt id="pyholster.MailingList.add_member">
+<code class="descname">add_member</code><span class="sig-paren">(</span><em>member</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.add_member"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.add_member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a member to the MailingList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.add_members">
+<code class="descname">add_members</code><span class="sig-paren">(</span><em>members</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.add_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.add_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add multiple members to the MailingList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.delete_all_members">
+<code class="descname">delete_all_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.delete_all_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.delete_all_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to delete all members. Return False if one or more delete
+attempts raised an error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.get_member_by_address">
+<code class="descname">get_member_by_address</code><span class="sig-paren">(</span><em>address</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.get_member_by_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.get_member_by_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a member based on his address.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.get_member_by_var">
+<code class="descname">get_member_by_var</code><span class="sig-paren">(</span><em>var</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.get_member_by_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.get_member_by_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the first member that is encountered in the list of members
+filtered by the passed variable (singular).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.get_member_by_vars">
+<code class="descname">get_member_by_vars</code><span class="sig-paren">(</span><em>**vars_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.get_member_by_vars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.get_member_by_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the first member that is encountered in the list of members
+filtered by the passed variables (plural).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.get_members_by_var">
+<code class="descname">get_members_by_var</code><span class="sig-paren">(</span><em>var</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.get_members_by_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.get_members_by_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator generating a filtered list of members based on
+the passed variable (singular).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.get_members_by_vars">
+<code class="descname">get_members_by_vars</code><span class="sig-paren">(</span><em>**vars_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.get_members_by_vars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.get_members_by_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator generating a filtered list of members based on
+the passed variables (plural).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.implement">
+<code class="descname">implement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.implement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.implement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement a MailingList for the first time on Mailgun. Not for
+updating.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.is_implemented">
+<code class="descname">is_implemented</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.is_implemented"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.is_implemented" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a MailingList with this address is implemented by
+trying to load it from Mailgun.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyholster.MailingList.load">
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>address</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a single MailingList by address.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyholster.MailingList.load_all">
+<em class="property">classmethod </em><code class="descname">load_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.load_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.load_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load all MailingLists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.load_members">
+<code class="descname">load_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.load_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.load_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load all members of the MailingList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.save_members">
+<code class="descname">save_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.save_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.save_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert/safe all set members individually.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.MailingList.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>safe=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/list.html#MailingList.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.MailingList.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the given attributes (by key=value). Update the MailingList
+at Mailgun if <cite>safe</cite> is True.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="member">
+<h2>Member<a class="headerlink" href="#member" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyholster.Member">
+<em class="property">class </em><code class="descclassname">pyholster.</code><code class="descname">Member</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/member.html#Member"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Describes a MailingList member</p>
+<dl class="method">
+<dt id="pyholster.Member.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/member.html#Member.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Member.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the Member from Mailgun and, if it succeeds, from the
+MailingList it belongs to.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.Member.implement">
+<code class="descname">implement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/member.html#Member.implement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Member.implement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a member for the first time on Mailgun. Don&#8217;t use for
+updates.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.Member.is_implemented">
+<code class="descname">is_implemented</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/member.html#Member.is_implemented"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Member.is_implemented" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a Member with this address is implemented by trying
+to load it from Mailgun.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.Member.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/member.html#Member.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Member.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the given attributes (by key=value) and send to Mailgun.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="route">
+<h2>Route<a class="headerlink" href="#route" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyholster.Route">
+<em class="property">class </em><code class="descclassname">pyholster.</code><code class="descname">Route</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/route.html#Route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Route" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="mail">
+<h2>Mail<a class="headerlink" href="#mail" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyholster.Mail">
+<em class="property">class </em><code class="descclassname">pyholster.</code><code class="descname">Mail</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/mail.html#Mail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Mail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the sending of a Mail trough Mailgun.</p>
+<dl class="method">
+<dt id="pyholster.Mail.check_attributes">
+<code class="descname">check_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/mail.html#Mail.check_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Mail.check_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the attributes are the right format.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.Mail.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/mail.html#Mail.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Mail.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a data structure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.Mail.get_files">
+<code class="descname">get_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/mail.html#Mail.get_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Mail.get_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a file structure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyholster.Mail.send">
+<code class="descname">send</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/mail.html#Mail.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.Mail.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the Mail to Mailgun.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="tutorial.html" class="btn btn-neutral" title="Tutorial"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Peter Somhorst.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

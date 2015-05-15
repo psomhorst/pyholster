@@ -1,0 +1,223 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Modules &mdash; pyholster 0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyholster 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Classes" href="classes.html"/>
+        <link rel="prev" title="Tutorial" href="tutorial.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="index.html" class="fa fa-home"> pyholster</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyholster.api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classes.html#mailinglist">MailingList</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classes.html#member">Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classes.html#route">Route</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classes.html#mail">Mail</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pyholster</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Modules</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/modules.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="modules">
+<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pyholster.api">
+<span id="api"></span><h2>API<a class="headerlink" href="#module-pyholster.api" title="Permalink to this headline">¶</a></h2>
+<p>Send requests to Mailgun and handle responses.</p>
+<dl class="function">
+<dt id="pyholster.api.set_key">
+<code class="descclassname">pyholster.api.</code><code class="descname">set_key</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/api.html#set_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.api.set_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the API key to use.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyholster.api.get">
+<code class="descclassname">pyholster.api.</code><code class="descname">get</code><span class="sig-paren">(</span><em>url</em>, <em>params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/api.html#get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.api.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a GET request.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyholster.api.post">
+<code class="descclassname">pyholster.api.</code><code class="descname">post</code><span class="sig-paren">(</span><em>url</em>, <em>data</em>, <em>files=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/api.html#post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.api.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a POST request.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyholster.api.put">
+<code class="descclassname">pyholster.api.</code><code class="descname">put</code><span class="sig-paren">(</span><em>url</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/api.html#put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.api.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a PUT request.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyholster.api.delete">
+<code class="descclassname">pyholster.api.</code><code class="descname">delete</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyholster/api.html#delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyholster.api.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a DELETE request.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classes.html" class="btn btn-neutral float-right" title="Classes">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorial.html" class="btn btn-neutral" title="Tutorial"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Peter Somhorst.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

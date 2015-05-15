@@ -1,0 +1,7 @@
+Modules
+=======
+
+API
+---
+.. automodule:: pyholster.api
+    :members: set_key, get, post, put, delete

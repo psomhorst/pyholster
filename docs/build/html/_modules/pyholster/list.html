@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyholster.list &mdash; pyholster 0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyholster 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../../index.html" class="fa fa-home"> pyholster</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#module-pyholster.api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../classes.html">Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#mailinglist">MailingList</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#member">Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#route">Route</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#mail">Mail</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../exceptions.html">Exceptions</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pyholster</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pyholster.list</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for pyholster.list</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">errors</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">api</span>
+<span class="kn">from</span> <span class="nn">.member</span> <span class="kn">import</span> <span class="n">Member</span>
+
+
+<div class="viewcode-block" id="MailingList"><a class="viewcode-back" href="../../index.html#pyholster.MailingList">[docs]</a><span class="k">class</span> <span class="nc">MailingList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Represent a MailingList in Mailgun. This class manages the alias</span>
+<span class="sd">    (address), name, description and access level, as well as the members.&quot;&quot;&quot;</span>
+
+    <span class="n">address</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">access_level</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">members</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">##</span>
+    <span class="c"># Magic methods</span>
+    <span class="c">##</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize based on existing data.&quot;&quot;&quot;</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;address&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;address&#39;</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;access_level&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;access_level&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__setattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prevent direct setting of attributes.&quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunNotSettableError</span><span class="p">(</span>
+            <span class="s">&quot;Attributes of the MailingList cannot be set directly.&quot;</span>
+            <span class="s">&quot;Use the update() method.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">attribute</span> <span class="o">==</span> <span class="s">&#39;members&#39;</span>
+                <span class="ow">and</span> <span class="nb">object</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;members&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_members</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
+
+    <span class="c">##</span>
+    <span class="c"># Class methods</span>
+    <span class="c">##</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MailingList.load"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load a single MailingList by address.&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">address</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunException</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s">&quot;Could not load MailingList from Mailgun.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;list&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+                       <span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                       <span class="n">description</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                       <span class="n">access_level</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;access_level&#39;</span><span class="p">))</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MailingList.load_all"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.load_all">[docs]</a>    <span class="k">def</span> <span class="nf">load_all</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load all MailingLists.&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s">&#39;Could not load any MailingLists from Mailgun.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">cls</span><span class="p">(</span><span class="o">**</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">])</span>
+
+    <span class="c">##</span>
+    <span class="c"># Getter, setters, deleters</span>
+    <span class="c">##</span>
+</div>
+<div class="viewcode-block" id="MailingList.update"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the given attributes (by key=value). Update the MailingList</span>
+<span class="sd">        at Mailgun if `safe` is True.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">safe</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">implement</span><span class="p">()</span>
+
+        <span class="n">update_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="o">&amp;</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="s">&#39;access_level&#39;</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+                <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="n">update_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s">&#39;address&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;address&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;new_address&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;address&#39;</span><span class="p">))</span>
+            <span class="n">update_data</span><span class="p">[</span><span class="s">&#39;address&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;address&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">update_data</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">safe</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__safe</span><span class="p">(</span><span class="n">update_data</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__safe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Safe update data to Mailgun.&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s">&#39;/lists/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">),</span>
+                    <span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;new_address&#39;</span><span class="p">):</span>
+                <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;address&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_address</span><span class="p">)</span>
+                <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;new_address&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+<div class="viewcode-block" id="MailingList.implement"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.implement">[docs]</a>    <span class="k">def</span> <span class="nf">implement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement a MailingList for the first time on Mailgun. Not for</span>
+<span class="sd">        updating.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_implemented</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunException</span><span class="p">(</span>
+                <span class="s">&quot;This MailingList is already implemented on Mailgun.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;new_address&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunException</span><span class="p">(</span><span class="s">&quot;The new_address attribute cannot&quot;</span>
+                                          <span class="s">&quot;be set for a new MailingList.&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;address&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+                <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="s">&#39;access_level&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_level</span><span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/lists&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span><span class="p">:</span>
+            <span class="k">raise</span>
+            <span class="c"># TODO: error handling</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_members</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&#39;/lists/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="c">##</span>
+    <span class="c">#  Members: getting, setting, removing</span>
+    <span class="c">##</span>
+
+<div class="viewcode-block" id="MailingList.save_members"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.save_members">[docs]</a>    <span class="k">def</span> <span class="nf">save_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert/safe all set members individually.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">upsert</span><span class="p">()</span> <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MailingList.load_members"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.load_members">[docs]</a>    <span class="k">def</span> <span class="nf">load_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load all members of the MailingList.&quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/lists/{}/members&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;members&#39;</span><span class="p">,</span>
+                           <span class="p">[</span><span class="n">Member</span><span class="p">(</span><span class="n">mailing_list</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">member</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;items&#39;</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">members</span>
+</div>
+<div class="viewcode-block" id="MailingList.add_member"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.add_member">[docs]</a>    <span class="k">def</span> <span class="nf">add_member</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">member</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a member to the MailingList.&quot;&quot;&quot;</span>
+
+        <span class="n">member</span><span class="o">.</span><span class="n">mailing_list</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">member</span><span class="o">.</span><span class="n">upsert</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MailingList.add_members"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.add_members">[docs]</a>    <span class="k">def</span> <span class="nf">add_members</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">members</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add multiple members to the MailingList.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+            <span class="n">member</span><span class="o">.</span><span class="n">mailing_list</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">member</span><span class="o">.</span><span class="n">upsert</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MailingList.get_members_by_vars"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.get_members_by_vars">[docs]</a>    <span class="k">def</span> <span class="nf">get_members_by_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">vars_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a generator generating a filtered list of members based on</span>
+<span class="sd">        the passed variables (plural).&quot;&quot;&quot;</span>
+
+        <span class="k">print</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">vars</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="p">]</span>
+        <span class="n">members</span> <span class="o">=</span> <span class="p">[</span><span class="n">member</span> <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">members</span>
+                   <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span>
+                          <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">vars_</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">members</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">member</span>
+</div>
+<div class="viewcode-block" id="MailingList.get_members_by_var"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.get_members_by_var">[docs]</a>    <span class="k">def</span> <span class="nf">get_members_by_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a generator generating a filtered list of members based on</span>
+<span class="sd">        the passed variable (singular).&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_members_by_vars</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="MailingList.get_member_by_vars"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.get_member_by_vars">[docs]</a>    <span class="k">def</span> <span class="nf">get_member_by_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">vars_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the first member that is encountered in the list of members</span>
+<span class="sd">        filtered by the passed variables (plural).&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_members_by_vars</span><span class="p">(</span><span class="o">**</span><span class="n">vars_</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="MailingList.get_member_by_var"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.get_member_by_var">[docs]</a>    <span class="k">def</span> <span class="nf">get_member_by_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the first member that is encountered in the list of members</span>
+<span class="sd">        filtered by the passed variable (singular).&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_members_by_var</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="MailingList.get_member_by_address"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.get_member_by_address">[docs]</a>    <span class="k">def</span> <span class="nf">get_member_by_address</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a member based on his address.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">member</span> <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">members</span>
+                        <span class="k">if</span> <span class="n">member</span><span class="o">.</span><span class="n">address</span> <span class="o">==</span> <span class="n">address</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="MailingList.delete_all_members"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.delete_all_members">[docs]</a>    <span class="k">def</span> <span class="nf">delete_all_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Try to delete all members. Return False if one or more delete</span>
+<span class="sd">        attempts raised an error.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">internal</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">member</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+                    <span class="k">yield</span> <span class="bp">True</span>
+                <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="bp">False</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">internal</span><span class="p">()))</span>
+
+    <span class="c">##</span>
+    <span class="c"># Miscellaneous</span>
+    <span class="c">##</span>
+</div>
+<div class="viewcode-block" id="MailingList.is_implemented"><a class="viewcode-back" href="../../index.html#pyholster.MailingList.is_implemented">[docs]</a>    <span class="k">def</span> <span class="nf">is_implemented</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether a MailingList with this address is implemented by</span>
+<span class="sd">        trying to load it from Mailgun.&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span></div></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Peter Somhorst.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

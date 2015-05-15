@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyholster.errors &mdash; pyholster 0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyholster 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../../index.html" class="fa fa-home"> pyholster</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#module-pyholster.api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../classes.html">Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#mailinglist">MailingList</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#member">Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#route">Route</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#mail">Mail</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../exceptions.html">Exceptions</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pyholster</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pyholster.errors</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for pyholster.errors</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="PHException"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHException">[docs]</a><span class="k">class</span> <span class="nc">PHException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;General exception, parent to all other exceptions.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<span class="k">class</span> <span class="nc">PHNotSettableError</span><span class="p">(</span><span class="n">PHException</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">PHVerifyFailed</span><span class="p">(</span><span class="n">PHException</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">PHDuplicateAddress</span><span class="p">(</span><span class="n">PHException</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="PHRequestException"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHRequestException">[docs]</a><span class="k">class</span> <span class="nc">PHRequestException</span><span class="p">(</span><span class="n">PHException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Request exceptions are thrown due to HTTP response codes and descendants</span>
+<span class="sd">    of PHRequestException.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PHBadRequest"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHBadRequest">[docs]</a><span class="k">class</span> <span class="nc">PHBadRequest</span><span class="p">(</span><span class="n">PHRequestException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Server returned a 400 `Bad Request` code.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PHUnauthorized"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHUnauthorized">[docs]</a><span class="k">class</span> <span class="nc">PHUnauthorized</span><span class="p">(</span><span class="n">PHRequestException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Server returned a 401 `Unauthorized` code.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PHFailed"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHFailed">[docs]</a><span class="k">class</span> <span class="nc">PHFailed</span><span class="p">(</span><span class="n">PHRequestException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Server returned a 402 `Failed` code.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PHNotFound"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHNotFound">[docs]</a><span class="k">class</span> <span class="nc">PHNotFound</span><span class="p">(</span><span class="n">PHRequestException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Server returned a 404 `Not Found` code.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PHServerError"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHServerError">[docs]</a><span class="k">class</span> <span class="nc">PHServerError</span><span class="p">(</span><span class="n">PHRequestException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Server returned a 500, 502, 503, or 504 `Server Error` code.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PHUnknown"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHUnknown">[docs]</a><span class="k">class</span> <span class="nc">PHUnknown</span><span class="p">(</span><span class="n">PHRequestException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Server returned a unknown HTTP status code.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="PHNotAcceptable"><a class="viewcode-back" href="../../exceptions.html#pyholster.errors.PHNotAcceptable">[docs]</a><span class="k">class</span> <span class="nc">PHNotAcceptable</span><span class="p">(</span><span class="n">PHRequestException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Server returned a 406 `Not Acceptable` code.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+</div>
+<span class="n">html_status_codes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">400</span><span class="p">:</span> <span class="n">PHBadRequest</span><span class="p">,</span>
+    <span class="mi">401</span><span class="p">:</span> <span class="n">PHUnauthorized</span><span class="p">,</span>
+    <span class="mi">402</span><span class="p">:</span> <span class="n">PHFailed</span><span class="p">,</span>
+    <span class="mi">404</span><span class="p">:</span> <span class="n">PHNotFound</span><span class="p">,</span>
+    <span class="mi">406</span><span class="p">:</span> <span class="n">PHNotAcceptable</span><span class="p">,</span>
+    <span class="mi">500</span><span class="p">:</span> <span class="n">PHServerError</span><span class="p">,</span>
+    <span class="mi">502</span><span class="p">:</span> <span class="n">PHServerError</span><span class="p">,</span>
+    <span class="mi">503</span><span class="p">:</span> <span class="n">PHServerError</span><span class="p">,</span>
+    <span class="mi">504</span><span class="p">:</span> <span class="n">PHServerError</span>
+<span class="p">}</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Peter Somhorst.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

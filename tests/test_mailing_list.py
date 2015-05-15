@@ -11,54 +11,7 @@ import pyholster
 from utils import load_fixture
 
 
-class TestMailingList:
-
-    def set_apikey(self):
-        keypath = os.path.abspath(os.path.dirname(
-            os.path.realpath(__file__)) + '/../api.key')
-
-        with open(keypath, 'r') as keyfile:
-            pyholster.api.set_apikey(keyfile.read())
-
-    def test_implement_and_destroy(self):
-        self.set_apikey()
-
-        create_lists = load_fixture('lists_create.yml')
-
-        for clist in create_lists['items']:
-            try:
-                pyholster.MailingList.load(clist['address']).delete()
-            except LookupError:
-                pass
-            mlist = pyholster.MailingList(**clist)
-            mlist.implement()
-
-            pyholster.MailingList.load(clist['address'])
-
-            mlist.delete()
-
-    def test_member_management(self):
-        self.set_apikey()
-
-        create_lists = load_fixture('lists_create.yml')['items']
-        members = load_fixture('members.yml')['items']
-        clist = create_lists[0]
-        try:
-            pyholster.MailingList.load(clist['address']).delete()
-        except LookupError:
-            pass
-        mlist = pyholster.MailingList(**clist)
-        mlist.implement()
-
-        members_adding = copy.copy(members)
-        member = members_adding.pop(0)
-
-        mlist.add_member(pyholster.Member(**member))
-
-        mlist.add_members([pyholster.Member(**member)
-                           for member in members_adding])
-
-        mlist.update()
+class TestMailingListDry:
 
     @responses.activate
     def test_load_all(self):
@@ -276,3 +229,58 @@ class TestMailingList:
         assert lst.address == fixt['address']
         assert lst.name == fixt['name']
         assert lst.description == fixt['description']
+
+class TestMailingListWet:
+    def set_apikey(self):
+        keypath = os.path.abspath(os.path.dirname(
+            os.path.realpath(__file__)) + '/../api.key')
+
+        with open(keypath, 'r') as keyfile:
+            pyholster.api.set_apikey(keyfile.read())
+
+    def test_implement_and_destroy(self):
+        self.set_apikey()
+
+        create_lists = load_fixture('lists_wet.yml')
+
+        for clist in create_lists['items']:
+            try:
+                pyholster.MailingList.load(clist['address']).delete()
+            except LookupError:
+                pass
+            mlist = pyholster.MailingList(**clist)
+            mlist.implement()
+
+            pyholster.MailingList.load(clist['address'])
+
+            mlist.delete()
+
+    def test_member_management(self):
+
+        self.set_apikey()
+
+        create_lists = load_fixture('lists_wet.yml')['items']
+        members = load_fixture('members.yml')['items']
+        clist = create_lists[0]
+
+        try:
+            pyholster.MailingList.load(clist['address']).delete()
+        except LookupError:
+            pass
+        mlist = pyholster.MailingList(**clist)
+        mlist.implement()
+
+        members_adding = copy.copy(members)
+        member = members_adding.pop(0)
+
+        mlist.add_member(pyholster.Member(**member))
+
+        mlist.add_members([pyholster.Member(**member)
+                           for member in members_adding])
+
+        tlist = pyholster.MailingList.load(clist['address'])
+        assert len(tlist.members) == len(members)
+
+        tlist.members[0].delete()
+
+        assert len(tlist.members) == len(members) - 1

@@ -6,18 +6,7 @@ from . import errors
 
 class Route(object):
 
-    priority = None
-    description = None
-    expression = None
-    actions = None
-    id = None
-    created_at = None
-
     def __init__(self, **kwargs):
-        try:
-            print(kwargs.get('actions'), type(kwargs.get('actions')))
-        except:
-            pass
 
         if not isinstance(kwargs['actions'], list):
             raise ValueError("Actions should be a list.")
@@ -25,7 +14,8 @@ class Route(object):
         object.__setattr__(self, 'expression', kwargs['expression'])
         object.__setattr__(self, 'actions', kwargs['actions'])
         object.__setattr__(self, 'priority', kwargs.get('priority', 0))
-        object.__setattr__(self, 'description', kwargs.get('description', None))
+        object.__setattr__(
+            self, 'description', kwargs.get('description', None))
         object.__setattr__(self, 'id', kwargs.get('id', None))
         object.__setattr__(self, 'created_at', (dtparser.parse(kwargs.get('created_at'))
                                                 if 'created_at' in kwargs else None))
@@ -38,7 +28,7 @@ class Route(object):
     def load(cls, id):
         try:
             response = api.get('/routes/{}'.format(id))
-        except errors.MailgunException:
+        except errors.PHException:
             raise LookupError('Could not load Route from Mailgun.')
         else:
             return cls(**response['route'])
@@ -47,24 +37,26 @@ class Route(object):
     def load_all(cls):
         try:
             response = api.get('/routes')
-        except errors.MailgunException:
+        except errors.PHException:
             raise LookupError('Could not load Routes from Mailgun.')
         else:
             return (cls(**m) for m in response['items'])
 
     def update(self, **kwargs):
+        id_set = False
+        if 'id' in kwargs and not self.id:
+            object.__setattr__(self, 'id', kwargs['id'])
+            del kwargs['id']
+            id_set = True
 
-
-        if not self.is_implemented():
-            raise errors.MailgunException(
+        if not self.is_implemented() and not id_set:
+            raise errors.PHException(
                 'Cannot update non-implemented Route. Implement first.')
-
-        if 'id' in kwargs:
-            raise AttributeError('Cannot update the ID of a Route.')
 
         update_data = {}
 
-        for key in set(kwargs.keys()) & set(['priority', 'description', 'expression']):
+        for key in set(kwargs.keys()) & set(['priority',
+                                             'description', 'expression']):
             object.__setattr__(self, key, kwargs[key])
             update_data[key] = kwargs[key]
 
@@ -72,25 +64,29 @@ class Route(object):
             object.__setattr__(self, 'actions', kwargs['actions'])
             update_data['action'] = kwargs['actions']
 
-        try:
-            api.put('/routes/{}'.format(self.id), update_data)
-        except errors.MailgunRequestException:
-            raise
-        else:
-            return True
+        if len(update_data):
+            try:
+                api.put('/routes/{}'.format(self.id), update_data)
+            except errors.PHException:
+                raise
+
+        return True
 
     def implement(self):
         if self.is_implemented():
-            raise errors.MailgunException("This Route is already implemented.")
+            raise errors.PHException("This Route is already implemented.")
 
         data = {'priority': self.priority,
                 'description': self.description,
                 'expression': self.expression,
                 'action': self.actions}
 
+        print(data)
+
         try:
-            api.post('/routes', data)
-        except errors.MailgunRequestException:
+            response = api.post('/routes', data)
+            self.update(id=response['route']['id'])
+        except errors.PHException:
             raise
         else:
             return True
@@ -98,7 +94,7 @@ class Route(object):
     def delete(self):
         try:
             api.delete('/routes/{}'.format(self.id))
-        except errors.MailgunRequestException:
+        except errors.PHException:
             raise
         return True
 

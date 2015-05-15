@@ -1,58 +1,78 @@
-class MailgunException(Exception):
+class PHException(Exception):
+
+    """General exception, parent to all other exceptions."""
     pass
 
 
-class MailgunRequestException(MailgunException):
+class PHNotSettableError(PHException):
     pass
 
 
-class MailgunBadRequest(MailgunRequestException):
+class PHVerifyFailed(PHException):
     pass
 
 
-class MailgunUnauthorized(MailgunRequestException):
+class PHDuplicateAddress(PHException):
     pass
 
 
-class MailgunFailed(MailgunRequestException):
+class PHRequestException(PHException):
+    """Request exceptions are thrown due to HTTP response codes and descendants
+    of PHRequestException."""
+
     pass
 
 
-class MailgunNotFound(MailgunRequestException):
+class PHBadRequest(PHRequestException):
+    """Server returned a 400 `Bad Request` code."""
+
     pass
 
 
-class MailgunServerError(MailgunRequestException):
+class PHUnauthorized(PHRequestException):
+    """Server returned a 401 `Unauthorized` code."""
+
     pass
 
 
-class MailgunUnknown(MailgunRequestException):
+class PHFailed(PHRequestException):
+    """Server returned a 402 `Failed` code."""
+
     pass
 
 
-class MailgunNotAcceptable(MailgunRequestException):
+class PHNotFound(PHRequestException):
+    """Server returned a 404 `Not Found` code."""
+
     pass
 
 
-class MailgunNotSettableError(MailgunException):
+class PHServerError(PHRequestException):
+    """Server returned a 500, 502, 503, or 504 `Server Error` code."""
+
     pass
 
 
-class MailgunVerifyFailed(MailgunException):
+class PHUnknown(PHRequestException):
+    """Server returned a unknown HTTP status code."""
+
     pass
 
 
-class MailgunDuplicateAddress(MailgunException):
+class PHNotAcceptable(PHRequestException):
+    """Server returned a 406 `Not Acceptable` code."""
+
     pass
+
 
 html_status_codes = {
-    400: MailgunBadRequest,
-    401: MailgunUnauthorized,
-    402: MailgunFailed,
-    404: MailgunNotFound,
-    406: MailgunNotAcceptable,
-    500: MailgunServerError,
-    502: MailgunServerError,
-    503: MailgunServerError,
-    504: MailgunServerError
+    400: PHBadRequest,
+    401: PHUnauthorized,
+    402: PHFailed,
+    404: PHNotFound,
+    406: PHNotAcceptable,
+    500: PHServerError,
+    502: PHServerError,
+    503: PHServerError,
+    504: PHServerError
 }

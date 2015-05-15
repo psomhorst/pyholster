@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyholster.api &mdash; pyholster 0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyholster 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../../index.html" class="fa fa-home"> pyholster</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#module-pyholster.api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../classes.html">Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#mailinglist">MailingList</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#member">Member</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#route">Route</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../classes.html#mail">Mail</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../exceptions.html">Exceptions</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pyholster</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pyholster.api</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for pyholster.api</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Send requests to Mailgun and handle responses.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">hmac</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">errors</span>
+
+<span class="n">baseurl</span> <span class="o">=</span> <span class="s">&#39;https://api.mailgun.net/v3&#39;</span>
+<span class="n">apikey</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<div class="viewcode-block" id="set_key"><a class="viewcode-back" href="../../modules.html#pyholster.api.set_key">[docs]</a><span class="k">def</span> <span class="nf">set_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the API key to use.&quot;&quot;&quot;</span>
+
+    <span class="k">global</span> <span class="n">apikey</span>
+    <span class="n">apikey</span> <span class="o">=</span> <span class="n">key</span>
+
+</div>
+<div class="viewcode-block" id="get"><a class="viewcode-back" href="../../modules.html#pyholster.api.get">[docs]</a><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Send a GET request.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">apikey</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunUnauthorized</span><span class="p">(</span><span class="s">&quot;No API key provided.&quot;</span><span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">baseurl</span> <span class="o">+</span> <span class="n">url</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">handle_response</span><span class="p">(</span>
+            <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;api&#39;</span><span class="p">,</span> <span class="n">apikey</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span>
+
+</div>
+<div class="viewcode-block" id="post"><a class="viewcode-back" href="../../modules.html#pyholster.api.post">[docs]</a><span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send a POST request.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">apikey</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunUnauthorized</span><span class="p">(</span><span class="s">&quot;No API key provided.&quot;</span><span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="p">(</span><span class="n">baseurl</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">globals</span><span class="p">())</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;auth&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;api&#39;</span><span class="p">,</span> <span class="n">apikey</span><span class="p">),</span>
+                      <span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">data</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s">&#39;files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">files</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">handle_response</span><span class="p">(</span>
+            <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">),</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">attributes</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span>
+
+</div>
+<div class="viewcode-block" id="put"><a class="viewcode-back" href="../../modules.html#pyholster.api.put">[docs]</a><span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send a PUT request.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">apikey</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunUnauthorized</span><span class="p">(</span><span class="s">&quot;No API key provided.&quot;</span><span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">baseurl</span> <span class="o">+</span> <span class="n">url</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">handle_response</span><span class="p">(</span>
+            <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;api&#39;</span><span class="p">,</span> <span class="n">apikey</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span>
+
+</div>
+<div class="viewcode-block" id="delete"><a class="viewcode-back" href="../../modules.html#pyholster.api.delete">[docs]</a><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Send a DELETE request.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">apikey</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunUnauthorized</span><span class="p">(</span><span class="s">&quot;No API key provided.&quot;</span><span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="n">baseurl</span> <span class="o">+</span> <span class="n">url</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">handle_response</span><span class="p">(</span>
+            <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;api&#39;</span><span class="p">,</span> <span class="n">apikey</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunRequestException</span>
+
+</div>
+<span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handle the response from Mailgun.&quot;&quot;&quot;</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;[{request[method]}] {request[url]} :: {reason}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">request</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">__dict__</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s">&#39;token&#39;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">__verify_token</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunVerifyFailed</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="n">errors</span><span class="o">.</span><span class="n">html_status_codes</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">html_status_codes</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">](</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">MailgunUnknown</span><span class="p">(</span>
+            <span class="s">&quot;[{req[method]}] {req[url]} :: {code} :: {code_type} :: {reason}&quot;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">code_type</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)),</span>
+                    <span class="n">req</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">__dict__</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">r</span>
+
+
+<span class="k">def</span> <span class="nf">__verify_token</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Verify the token sent by Mailgun.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;signature&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="nb">globals</span><span class="p">()[</span><span class="s">&#39;apikey&#39;</span><span class="p">],</span>
+        <span class="n">msg</span><span class="o">=</span><span class="s">&#39;{}{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;timestamp&#39;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">]),</span>
+        <span class="n">digestmod</span><span class="o">=</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+<span class="n">hooks</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">handle_response</span><span class="p">)</span>
+
+<span class="n">GET</span> <span class="o">=</span> <span class="n">get</span>
+<span class="n">PUT</span> <span class="o">=</span> <span class="n">put</span>
+<span class="n">POST</span> <span class="o">=</span> <span class="n">post</span>
+<span class="n">DELETE</span> <span class="o">=</span> <span class="n">delete</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Peter Somhorst.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -5,6 +5,9 @@ from .member import Member
 
 class MailingList(object):
 
+    """Represent a MailingList in Mailgun. This class manages the alias
+    (address), name, description and access level, as well as the members."""
+
     address = None
     name = None
     description = None
@@ -16,6 +19,7 @@ class MailingList(object):
     ##
 
     def __init__(self, **kwargs):
+        """Initialize based on existing data."""
 
         object.__setattr__(self, 'address', kwargs.get('address'))
         object.__setattr__(self, 'name', kwargs.get('name', None))
@@ -27,8 +31,8 @@ class MailingList(object):
         """Prevent direct setting of attributes."""
 
         raise errors.MailgunNotSettableError(
-            'Attributes of the MailingList cannot be set directly.'
-            'Use the update() method.')
+            "Attributes of the MailingList cannot be set directly."
+            "Use the update() method.")
 
     def __getattribute__(self, attribute):
         if (attribute == 'members'
@@ -43,20 +47,20 @@ class MailingList(object):
 
     @classmethod
     def load(cls, address):
-        try:
-            response = api.get('/lists/{}'.format(address))
-            print response
-        except errors.MailgunException:
-            raise LookupError("Could not load MailingList from Mailgun.")
-        else:
-            data = response['list']
-            return cls(address=address,
-                       name=data.get('name', None),
-                       description=data.get('description', None),
-                       access_level=data.get('access_level'))
+        """Load a single MailingList by address."""
+
+
+        response = api.get('/lists/{}'.format(address))
+        data = response['list']
+        return cls(address=address,
+                   name=data.get('name', None),
+                   description=data.get('description', None),
+                   access_level=data.get('access_level'))
 
     @classmethod
     def load_all(cls):
+        """Load all MailingLists."""
+
         try:
             response = api.get('/lists')
         except errors.MailgunRequestException:
@@ -68,48 +72,54 @@ class MailingList(object):
     # Getter, setters, deleters
     ##
 
-    def update(self, **kwargs):
-        """Update the given attributes (by key=value) and send to Mailgun."""
+    def update(self, safe=True, **kwargs):
+        """Update the given attributes (by key=value). Update the MailingList
+        at Mailgun if `safe` is True."""
 
-        if not self.is_implemented():
-            raise errors.MailgunException(
-                'Can not update non-implemented Member. Insert first.')
+        if safe and not self.is_implemented():
+            self.implement()
 
         update_data = {}
 
         for key in (set(kwargs.keys())
                     & set(['name', 'description', 'access_level'])):
-            object.__setattr__(self, key, kwargs.get(key))
-            update_data[key] = kwargs.get(key)
+            if getattr(self, key) != kwargs.get(key):
+                object.__setattr__(self, key, kwargs.get(key))
+                update_data[key] = kwargs.get(key)
 
-        if 'address' in kwargs:
+        if 'address' in kwargs and kwargs['address'] != self.address:
             object.__setattr__(self, 'new_address', kwargs.get('address'))
             update_data['address'] = kwargs.get('address')
 
-        if not len(update_data):
-            return self.save_members()
+        if not len(update_data) or not safe:
+            return True
+
+        return self.__safe(update_data)
+
+    def __safe(self, data):
+        """Safe update data to Mailgun."""
 
         try:
             api.put('/lists/{}'.format(self.address),
-                    update_data)
+                    data)
         except errors.MailgunRequestException:
             raise
         else:
             if hasattr(self, 'new_address'):
                 object.__setattr__(self, 'address', self.new_address)
                 delattr(self, 'new_address')
-            return self.save_members()
+            return True
 
     def implement(self):
-        """Implements a MailingList for the first time on Mailgun. Don't use
-        for updates."""
+        """Implement a MailingList for the first time on Mailgun. Not for
+        updating."""
 
         if self.is_implemented():
-            raise errors.MailgunException(
+            raise errors.PHException(
                 "This MailingList is already implemented on Mailgun.")
 
         if hasattr(self, 'new_address'):
-            raise errors.MailgunException("The new_address attribute cannot"
+            raise errors.PHException("The new_address attribute cannot"
                                           "be set for a new MailingList.")
 
         data = {'address': self.address,
@@ -121,6 +131,7 @@ class MailingList(object):
             api.post('/lists', data)
         except errors.MailgunRequestException:
             raise
+            # TODO: error handling
         else:
             return self.save_members()
 
@@ -135,12 +146,15 @@ class MailingList(object):
     ##
     #  Members: getting, setting, removing
     ##
-    #
 
     def save_members(self):
+        """Insert/safe all set members individually."""
+
         return all(member.upsert() for member in self.members)
 
     def load_members(self):
+        """Load all members of the MailingList."""
+
         response = api.get('/lists/{}/members'.format(self.address))
         object.__setattr__(self, 'members',
                            [Member(mailing_list=self, **member)
@@ -148,77 +162,95 @@ class MailingList(object):
         return self.members
 
     def add_member(self, member):
+        """Add a member to the MailingList."""
+
         member.mailing_list = self
+        member.upsert()
         self.members.append(member)
 
     def add_members(self, members):
+        """Add multiple members to the MailingList."""
+
         for member in members:
+            if isinstance(member, dict):
+                member = Member(**member)
             member.mailing_list = self
+            member.upsert()
+
         self.members.extend(members)
 
     def get_members_by_vars(self, **vars_):
-        """Returns a generator generating a filtered list of members based on
+        """Return a generator generating a filtered list of members based on
         the passed variables (plural)."""
-        print [m.vars for m in self.members]
+
         members = [member for member in self.members
-                   if all(member.vars[var] == value
-                          for var, value in vars_.iteritems())]
+                   if all(var in member.vars and member.vars[var] == value
+                          for var, value in vars_.items())]
+
         if len(members):
             for member in members:
                 yield member
 
     def get_members_by_var(self, var, value):
-        """Returns a generator generating a filtered list of members based on
+        """Return a generator generating a filtered list of members based on
         the passed variable (singular)."""
 
         try:
             return self.get_members_by_vars(**{var: value})
         except StopIteration:
-            return None
+            return []
 
     def get_member_by_vars(self, **vars_):
-        """Returns the first member that is encountered in the list of members
+        """Return the first member that is encountered in the list of members
         filtered by the passed variables (plural)."""
 
         try:
             return next(self.get_members_by_vars(**vars_))
         except StopIteration:
-            return None
+            return []
 
     def get_member_by_var(self, var, value):
-        """Returns the first member that is encountered in the list of members
+        """Return the first member that is encountered in the list of members
         filtered by the passed variable (singular)."""
 
         try:
             return next(self.get_members_by_var(var, value))
         except StopIteration:
-            return None
+            return []
 
     def get_member_by_address(self, address):
-        """Gets a member based on his address."""
+        """Get a member based on his address."""
         try:
             return next(member for member in self.members
                         if member.address == address)
         except StopIteration:
-            return None
+            return []
 
     def delete_all_members(self):
+        """Try to delete all members. Return False if one or more delete
+        attempts raised an error."""
+
         def internal():
             for member in self.members():
                 try:
                     member.delete()
                     yield True
                 except errors.MailgunRequestException:
-                    raise
-        return all(internal())
+                    yield False
+
+        return all(list(internal()))
+
+    ##
+    # Miscellaneous
+    ##
 
     def is_implemented(self):
-        """Checks whether a MailingList with this address is implemented by
+        """Check whether a MailingList with this address is implemented by
         trying to load it from Mailgun."""
 
         try:
             self.__class__.load(self.address)
-        except LookupError:
+        except errors.PHNotFound:
             return False
         else:
             return True

@@ -8,12 +8,6 @@ class Member(object):
 
     """Describes a MailingList member"""
 
-    address = None
-    name = None
-    vars = None
-    subscribed = None
-    mailing_list = None
-
     ##
     # Magic methods
     # #
@@ -39,20 +33,15 @@ class Member(object):
 
     @classmethod
     def load(cls, lst, address):
-        try:
-            response = api.get('/lists/{}/members/{}'
-                               .format(lst.address, address))
-        except errors.MailgunRequestException:
-            raise LookupError(
-                "Could not load Members for MailingList {} from Mailgun."
-                .format(lst.address))
-        else:
-            data = response['member']
-            return cls(mailing_list=lst,
-                       address=data['address'],
-                       name=data.get('name'),
-                       vars=data.get('vars', {}),
-                       subscribed=data['subscribed'])
+        response = api.get('/lists/{}/members/{}'
+                           .format(lst.address, address))
+
+        data = response['member']
+        return cls(mailing_list=lst,
+                   address=data['address'],
+                   name=data.get('name'),
+                   vars=data.get('vars', {}),
+                   subscribed=data['subscribed'])
 
     ##
     # Getters and setters
@@ -97,6 +86,9 @@ class Member(object):
             return True
 
     def delete(self):
+        """Delete the Member from Mailgun and, if it succeeds, from the
+        MailingList it belongs to."""
+
         try:
             api.delete(
                 '/lists/{}/members/{}'.format(self.mailing_list.address,
@@ -104,6 +96,10 @@ class Member(object):
         except errors.MailgunRequestException:
             raise
         else:
+            try:
+                self.mailing_list.members.remove(self)
+            except:
+                pass
             return True
 
     def implement(self):
@@ -111,11 +107,11 @@ class Member(object):
         updates."""
 
         if self.is_implemented():
-            raise errors.MailgunException(
+            raise errors.PHException(
                 'This address is already in the MailingList on Mailgun.')
 
         if hasattr(self, 'new_address'):
-            raise errors.MailgunException(
+            raise errors.PHException(
                 'The new_address attribute cannot be set for new Members.')
 
         data = {'address': self.address,
@@ -145,10 +141,7 @@ class Member(object):
 
         try:
             self.__class__.load(self.mailing_list, self.address)
-        except errors.MailgunRequestException():
-            print self, 'Not implemented'
+        except errors.PHNotFound:
             return False
-        except Exception as e:
-            print e
         else:
             return True

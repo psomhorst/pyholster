@@ -1,0 +1,22 @@
+items:
+  - priority: 0
+    description: Aut ut odio unde porro in.
+    expression: match_recipient("alias1@lists.eu")
+    actions:
+      - forward("listsss@listlsitast.eu")
+      - forward("listsas@ast.eu")
+  - priority: 1
+    description: Aut ut odio unde porro in.
+    expression: match_recipient("alias3@lists.eu")
+    actions:
+      - forward("list@lists.eu")
+  - priority: 2
+    description: Aut ut odio unde porro in.
+    expression: match_recipient("alias2@lists.eu")
+    actions:
+      - forward("list2@lists.eu")
+  - priority: 0
+    description: Aut fuga magni adipisci.
+    expression: match_recipient("alias1@lists.eu")
+    actions:
+      - stop()

@@ -3,6 +3,8 @@ import types
 import pytest
 from dateutil import parser as dtparser
 import json
+import os
+import pytest
 
 from utils import load_fixture
 
@@ -64,7 +66,8 @@ class TestRoute:
         assert len(routes) == len(fixtures)
 
         assert all(isinstance(route, ph.Route) for route in routes)
-        assert set(map(lambda x: x.id, routes)) == set(map(lambda x: x['id'], fixtures))
+        assert set(map(lambda x: x.id, routes)) == set(
+            map(lambda x: x['id'], fixtures))
 
     @responses.activate
     def test_update(self):
@@ -164,3 +167,40 @@ class TestRoute:
         responses.reset()
 
         assert not route.is_implemented()
+
+
+class TestRouteWet:
+
+    @classmethod
+    @pytest.fixture(scope="class", autouse=True)
+    def setup(self):
+        keypath = os.path.abspath(os.path.dirname(
+            os.path.realpath(__file__)) + '/../api.key')
+
+        with open(keypath, 'r') as keyfile:
+            ph.api.set_apikey(keyfile.read())
+
+    def test_init_load_delete(self):
+
+        fixt_routes = load_fixture('routes_wet.yml')['items']
+        fixt_expressions = [x['expression'] for x in fixt_routes]
+
+        routes = []
+        for fixt_route in fixt_routes:
+            route = ph.Route(**fixt_route)
+            route.implement()
+            routes.append(route)
+
+        all_routes = list(ph.Route.load_all())
+
+        for route in routes:
+            assert route.expression in [x.expression for x in all_routes]
+
+        [route.delete() for route in routes]
+
+        for route in all_routes:
+            if route.expression in fixt_expressions:
+                try:
+                    route.delete()
+                except:
+                    pass

@@ -6,6 +6,8 @@ from . import api
 
 class Mail(object):
 
+    """Handles the sending of a Mail trough Mailgun."""
+
     id = None
     sent = False
 
@@ -24,6 +26,8 @@ class Mail(object):
     variables = None
 
     def __init__(self, **kwargs):
+        """Initialize a Mail object."""
+
         args = ('domain',
                 'sender',
                 'to', 'cc', 'bcc',
@@ -33,21 +37,24 @@ class Mail(object):
                 'options', 'headers', 'variables')
 
         unknown_attrs = set(kwargs.keys()) - set(args)
-        if len(unknown_attrs) > 1:
-            raise AttributeError("Unknown attributes {}.".format(', '.join(unknown_attrs)))
-        elif len(unknown_attrs) is 1:
-            raise AttributeError("Unknown attribute {}.".format(unknown_attrs.pop()))
+
+        if len(unknown_attrs):
+            raise AttributeError(
+                "Unknown attributes {}.".format(', '.join(unknown_attrs)))
 
         for attr in kwargs:
             setattr(self, attr, kwargs[attr])
 
     def send(self):
+        """Send the Mail to Mailgun."""
 
         self.check_attributes()
         data = self.get_data()
-        files = self.get_file()
+        files = self.get_files()
 
-        url = ('/{}/messages.mime' if self.message else '/{}/messages').format(self.domain)
+        url = ('/{}/messages.mime' if self.message
+               else '/{}/messages').format(self.domain)
+
         response = api.post(url, data, files=files)
 
         if response['message'] == "Queued. Thank you.":
@@ -56,16 +63,19 @@ class Mail(object):
             return True
 
         else:
-            raise errors.MailgunException("Could not send message: {}".format(response.message))
+            raise errors.MailgunException(
+                "Could not send message: {}".format(response.message))
 
     def get_data(self):
+        """Create a data structure."""
+
         data = {}
 
         for attr in (x for x in ('to', 'cc', 'bcc', 'subject',
                                  'text', 'html') if getattr(self, x)):
             data[attr] = getattr(self, attr)
 
-        data['from'] = self.sender  # exception on the rule, self.from cannot be used
+        data['from'] = self.sender
 
         for attr in (x for x in ('options', 'headers') if getattr(self, x)):
             for key, value in getattr(self, attr).iteritems():
@@ -78,18 +88,24 @@ class Mail(object):
         return data
 
     def get_files(self):
+        """Create a file structure."""
+
         if self.message:
             return {'message': self.message}
         elif self.attachments:
-            return [('attachment', attachment) for attachment in self.attachments]
+            return [('attachment', attachment)
+                    for attachment in self.attachments]
         else:
             return None
 
     def check_attributes(self):
+        """Check whether the attributes are the right format."""
 
-        num_content = sum(bool(x) for x in [self.text, self.message, self.html])
+        num_content = sum(bool(x)
+                          for x in [self.text, self.message, self.html])
         if num_content is 0:
-            raise ValueError("Either 'text', 'html' or 'message' should be set.")
+            raise ValueError(
+                "Either 'text', 'html' or 'message' should be set.")
         if any([self.text, self.html]) and self.message:
             raise ValueError("Either 'message' should be set, or 'test' and/or 'html',"
                              " not both 'message' and 'text'/'html'.")
