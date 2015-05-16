@@ -3,8 +3,11 @@
 import requests
 import hashlib
 import hmac
+import logging
 
 from . import errors
+
+logger = logging.getLogger(__name__)
 
 baseurl = 'https://api.mailgun.net/v3'
 apikey = None
@@ -25,6 +28,8 @@ def get(url, params={}):
 
     url = baseurl + url
 
+    logger.debug("PH GET: {}, {}".format(url, params))
+
     try:
         response = handle_response(
             requests.get(url, auth=('api', apikey), params=params))
@@ -43,6 +48,8 @@ def post(url, data, files=None):
 
     url = (baseurl + url).format(**globals())
 
+    logger.debug("PH GET: {}, {}".format(url, params))
+
     try:
         attributes = {'auth': ('api', apikey),
                       'data': (data)}
@@ -56,7 +63,7 @@ def post(url, data, files=None):
         return response.json()
 
     except requests.exceptions.ConnectionError:
-        raise errors.MailgunRequestException
+        raise errors.MailgunRequestException()
 
 
 def put(url, data):
@@ -66,6 +73,8 @@ def put(url, data):
         raise errors.MailgunUnauthorized("No API key provided.")
 
     url = baseurl + url
+
+    logger.debug("PH GET: {}, {}".format(url, data))
 
     try:
         response = handle_response(
@@ -85,6 +94,8 @@ def delete(url):
 
     url = baseurl + url
 
+    logger.debug("PH GET: {}".format(url))
+
     try:
         response = handle_response(
             requests.delete(url, auth=('api', apikey)))
@@ -100,6 +111,8 @@ def handle_response(r, *args, **kwargs):
 
     message = "[{request[method]}] {request[url]} :: {reason}".format(
         request=r.request.__dict__, reason=r.reason)
+
+    logger.debug("PH handle: {}".format(r))
 
     if 'token' in r.json():
         if not __verify_token(r.json()):
