@@ -1,4 +1,3 @@
-from . import errors
 from . import api
 from .member import Member
 
@@ -7,6 +6,8 @@ class MailingList(object):
 
     """Represent a MailingList in Mailgun. This class manages the alias
     (address), name, description and access level, as well as the members."""
+
+    class MailingListNotLoadable(Exception): pass
 
     address = None
     name = None
@@ -27,30 +28,27 @@ class MailingList(object):
             self, 'description', kwargs.get('description', None))
         object.__setattr__(self, 'access_level', kwargs.get('access_level'))
 
-    def __setattribute__(self, *args, **kwargs):
-        """Prevent direct setting of attributes."""
+    @property
+    def members(self):
+        if not hasattr(self, '_members'):
+            self._load_members()
+        return self._members
 
-        raise errors.MailgunNotSettableError(
-            "Attributes of the MailingList cannot be set directly."
-            "Use the update() method.")
-
-    def __getattribute__(self, attribute):
-        if (attribute == 'members'
-                and object.__getattribute__(self, 'members') is None):
-            self.load_members()
-
-        return object.__getattribute__(self, attribute)
 
     ##
     # Class methods
     ##
 
+
     @classmethod
     def load(cls, address):
         """Load a single MailingList by address."""
 
-
-        response = api.get('/lists/{}'.format(address))
+        try:
+            response = api.get('/lists/{}'.format(address))
+        except api.CommunicationError:
+            raise cls.MailingListNotLoadable(
+                "Could not load MailingList from Mailgun.")
         data = response['list']
         return cls(address=address,
                    name=data.get('name', None),
@@ -63,8 +61,9 @@ class MailingList(object):
 
         try:
             response = api.get('/lists')
-        except errors.MailgunRequestException:
-            raise LookupError('Could not load any MailingLists from Mailgun.')
+        except api.CommunicationError as E:
+            raise LookupError(
+                'Could not load any MailingLists from Mailgun.') from E
         else:
             return (cls(**m) for m in response['items'])
 
@@ -94,16 +93,16 @@ class MailingList(object):
         if not len(update_data) or not safe:
             return True
 
-        return self.__safe(update_data)
+        return self._safe(update_data)
 
-    def __safe(self, data):
+    def _safe(self, data):
         """Safe update data to Mailgun."""
 
         try:
             api.put('/lists/{}'.format(self.address),
                     data)
-        except errors.MailgunRequestException:
-            raise
+        except api.CommunicationError as E:
+            raise E
         else:
             if hasattr(self, 'new_address'):
                 object.__setattr__(self, 'address', self.new_address)
@@ -115,12 +114,7 @@ class MailingList(object):
         updating."""
 
         if self.is_implemented():
-            raise errors.PHException(
-                "This MailingList is already implemented on Mailgun.")
-
-        if hasattr(self, 'new_address'):
-            raise errors.PHException("The new_address attribute cannot"
-                                          "be set for a new MailingList.")
+            self.update()
 
         data = {'address': self.address,
                 'name': self.name,
@@ -129,16 +123,15 @@ class MailingList(object):
 
         try:
             api.post('/lists', data)
-        except errors.MailgunRequestException:
+        except api.CommunicationError:
             raise
-            # TODO: error handling
         else:
             return self.save_members()
 
     def delete(self):
         try:
             api.delete('/lists/{}'.format(self.address))
-        except errors.MailgunRequestException:
+        except api.CommunicationError:
             raise
         else:
             return True
@@ -152,14 +145,13 @@ class MailingList(object):
 
         return all(member.upsert() for member in self.members)
 
-    def load_members(self):
+    def _load_members(self):
         """Load all members of the MailingList."""
 
         response = api.get('/lists/{}/members'.format(self.address))
-        object.__setattr__(self, 'members',
-                           [Member(mailing_list=self, **member)
-                            for member in response['items']])
-        return self.members
+        self._members = [Member(mailing_list=self, **member)
+                         for member in response['items']]
+
 
     def add_member(self, member):
         """Add a member to the MailingList."""
@@ -235,7 +227,7 @@ class MailingList(object):
                 try:
                     member.delete()
                     yield True
-                except errors.MailgunRequestException:
+                except api.CommunicationError:
                     yield False
 
         return all(list(internal()))
@@ -250,7 +242,7 @@ class MailingList(object):
 
         try:
             self.__class__.load(self.address)
-        except errors.PHNotFound:
+        except self.MailingListNotLoadable:
             return False
         else:
             return True

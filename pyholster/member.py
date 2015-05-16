@@ -1,12 +1,16 @@
 import json
 
 from . import api
-from . import errors
 
 
 class Member(object):
 
     """Describes a MailingList member"""
+
+    class MemberNotLoadable(Exception): pass
+    class MemberNotImplemented(Exception): pass
+    class MemberNotDeleted(Exception): pass
+    class MemberNotUpdated(Exception): pass
 
     ##
     # Magic methods
@@ -20,12 +24,6 @@ class Member(object):
         object.__setattr__(self, 'subscribed', kwargs.get('subscribed', True))
         object.__setattr__(self, 'mailing_list', kwargs.get('mailing_list'))
 
-    def __setattribute__(self, *args, **kwargs):
-        """Prevent direct setting of attributes."""
-
-        raise errors.MailgunNotSettableError(
-            "Attributes of the Member cannot be set directly."
-            "Use the update() method.")
 
     ##
     # Class methods
@@ -33,8 +31,12 @@ class Member(object):
 
     @classmethod
     def load(cls, lst, address):
-        response = api.get('/lists/{}/members/{}'
-                           .format(lst.address, address))
+        try:
+            response = api.get('/lists/{}/members/{}'
+                               .format(lst.address, address))
+        except api.CommunicationError:
+            raise cls.MemberNotLoadable(
+                "Could not load Member from Mailgun.")
 
         data = response['member']
         return cls(mailing_list=lst,
@@ -51,7 +53,7 @@ class Member(object):
         """Update the given attributes (by key=value) and send to Mailgun."""
 
         if not self.is_implemented():
-            raise errors.MailgunException(
+            raise self.MemberNotImplemented(
                 "Can not update non-implemented Member. Insert first.")
 
         if 'mailing_list' in kwargs:
@@ -77,8 +79,8 @@ class Member(object):
             api.put('/lists/{}/members/{}'.format(self.mailing_list.address,
                                                   self.address),
                     update_data)
-        except errors.MailgunRequestException:
-            raise
+        except api.CommunicationError as E:
+            raise self.MemberNotUpdated("Could not update Member.") from E
         else:
             if hasattr(self, 'new_address'):
                 object.__setattr__(self, 'address', self.new_address)
@@ -93,8 +95,8 @@ class Member(object):
             api.delete(
                 '/lists/{}/members/{}'.format(self.mailing_list.address,
                                               self.address))
-        except errors.MailgunRequestException:
-            raise
+        except api.CommunicationError as E:
+            raise self.MemberNotDeleted("Could not delete Member.") from E
         else:
             try:
                 self.mailing_list.members.remove(self)
@@ -107,12 +109,8 @@ class Member(object):
         updates."""
 
         if self.is_implemented():
-            raise errors.PHException(
-                'This address is already in the MailingList on Mailgun.')
-
-        if hasattr(self, 'new_address'):
-            raise errors.PHException(
-                'The new_address attribute cannot be set for new Members.')
+            self.update()
+            return
 
         data = {'address': self.address,
                 'name': self.name,
@@ -123,8 +121,9 @@ class Member(object):
         try:
             api.post(
                 '/lists/{}/members'.format(self.mailing_list.address), data)
-        except errors.MailgunRequestException:
-            raise
+        except api.CommunicationError as E:
+            raise self.MemberNotImplemented(
+                "Could not implement Member.") from E
         else:
             return True
 
@@ -141,7 +140,7 @@ class Member(object):
 
         try:
             self.__class__.load(self.mailing_list, self.address)
-        except errors.PHNotFound:
+        except self.MemberNotLoadable:
             return False
         else:
             return True

@@ -5,13 +5,34 @@ import hashlib
 import hmac
 import logging
 
-from . import errors
-
 logger = logging.getLogger(__name__)
 
 baseurl = 'https://api.mailgun.net/v3'
 apikey = None
 
+class APIKeyError(Exception): pass
+class ConnectionError(Exception): pass
+class TokenError(Exception): pass
+
+class CommunicationError(Exception): pass
+class BadRequest(CommunicationError): pass
+class Unauthorized(CommunicationError): pass
+class Failed(CommunicationError): pass
+class NotFound(CommunicationError): pass
+class NotAcceptable(CommunicationError): pass
+class ServerError(CommunicationError): pass
+
+html_status_codes = {
+    400: BadRequest,
+    401: Unauthorized,
+    402: Failed,
+    404: NotFound,
+    406: NotAcceptable,
+    500: ServerError,
+    502: ServerError,
+    503: ServerError,
+    504: ServerError
+}
 
 def set_key(key):
     """Set the API key to use."""
@@ -24,7 +45,7 @@ def get(url, params={}):
     """Send a GET request."""
 
     if not apikey:
-        raise errors.PHException("No API key provided.")
+        raise APIKeyError("No API key provided.")
 
     url = baseurl + url
 
@@ -36,19 +57,19 @@ def get(url, params={}):
 
         return response.json()
 
-    except requests.exceptions.ConnectionError:
-        raise errors.MailgunRequestException
+    except requests.exceptions.ConnectionError as E:
+        raise ConnectionError() from E
 
 
 def post(url, data, files=None):
     """Send a POST request."""
 
     if not apikey:
-        raise errors.MailgunUnauthorized("No API key provided.")
+        raise APIKeyError("No API key provided.")
 
     url = (baseurl + url).format(**globals())
 
-    logger.debug("PH GET: {}, {}".format(url, params))
+    logger.debug("PH GET: {}, {}".format(url, data))
 
     try:
         attributes = {'auth': ('api', apikey),
@@ -62,15 +83,15 @@ def post(url, data, files=None):
 
         return response.json()
 
-    except requests.exceptions.ConnectionError:
-        raise errors.MailgunRequestException()
+    except requests.exceptions.ConnectionError as E:
+        raise ConnectionError() from E
 
 
 def put(url, data):
     """Send a PUT request."""
 
     if not apikey:
-        raise errors.MailgunUnauthorized("No API key provided.")
+        raise APIKeyError("No API key provided.")
 
     url = baseurl + url
 
@@ -82,15 +103,15 @@ def put(url, data):
 
         return response.json()
 
-    except requests.exceptions.ConnectionError:
-        raise errors.MailgunRequestException
+    except requests.exceptions.ConnectionError as E:
+        raise ConnectionError() from E
 
 
 def delete(url):
     """Send a DELETE request."""
 
     if not apikey:
-        raise errors.MailgunUnauthorized("No API key provided.")
+        raise APIKeyError("No API key provided.")
 
     url = baseurl + url
 
@@ -102,8 +123,8 @@ def delete(url):
 
         return response.json()
 
-    except requests.exceptions.ConnectionError:
-        raise errors.MailgunRequestException
+    except requests.exceptions.ConnectionError as E:
+        raise ConnectionError() from E
 
 
 def handle_response(r, *args, **kwargs):
@@ -114,15 +135,23 @@ def handle_response(r, *args, **kwargs):
 
     logger.debug("PH handle: {} || {} || {}".format(r, dir(r), r.text))
 
-    if 'token' in r.json():
-        if not __verify_token(r.json()):
-            raise errors.MailgunVerifyFailed()
+    try:
+        r.json()
+    except ValueError as E:
+        raise ServerError(
+            "[{req[method]}] {req[url]} :: {code} :: {code_type} :: {text} :: {reason}"
+            .format(code=r.status_code, code_type=str(type(r.status_code)),
+                    req=vars(r.request), text=r.text, reason=r.reason)) from E
 
-    if r.status_code in errors.html_status_codes:
-        raise errors.html_status_codes[r.status_code](message)
+    if 'token' in r.json():
+        if not _verify_token(r.json()):
+            raise TokenError("The Token could not be verified.")
+
+    if r.status_code in html_status_codes:
+        raise html_status_codes[r.status_code](message)
 
     elif r.status_code != 200:
-        raise errors.MailgunUnknown(
+        raise ServerError(
             "[{req[method]}] {req[url]} :: {code} :: {code_type} :: {reason}"
             .format(code=r.status_code, code_type=str(type(r.status_code)),
                     req=r.request.__dict__, reason=r.reason))
@@ -130,7 +159,7 @@ def handle_response(r, *args, **kwargs):
     return r
 
 
-def __verify_token(params):
+def _verify_token(params):
     """Verify the token sent by Mailgun."""
 
     return params['signature'] == hmac.new(
