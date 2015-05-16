@@ -112,7 +112,7 @@ def handle_response(r, *args, **kwargs):
     message = "[{request[method]}] {request[url]} :: {reason}".format(
         request=r.request.__dict__, reason=r.reason)
 
-    logger.debug("PH handle: {}".format(r))
+    logger.debug("PH handle: {} || {} || {}".format(r, dir(r), r.text))
 
     if 'token' in r.json():
         if not __verify_token(r.json()):
