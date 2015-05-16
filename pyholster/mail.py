@@ -1,6 +1,5 @@
 import json
 
-from . import errors
 from . import api
 
 
@@ -101,9 +100,8 @@ class Mail(object):
     def check_attributes(self):
         """Check whether the attributes are the right format."""
 
-        num_content = sum(bool(x)
-                          for x in [self.text, self.message, self.html])
-        if num_content is 0:
+
+        if not any(bool(x) for x in [self.text, self.message, self.html]):
             raise ValueError(
                 "Either 'text', 'html' or 'message' should be set.")
         if any([self.text, self.html]) and self.message:
